@@ -6,7 +6,7 @@ trigger:
   event:
     - push
   branch:
-    - master
+    - main
 
 platform:
   os: linux
@@ -25,10 +25,11 @@ steps:
   - name: build_docker
     image: plugins/docker
     settings:
-      registry: k3d-registry:5112
-      repo: test-nuxt
-      tags:
-        - latest
+      registry: k3d-registry:5000
+      cache_from: "k3d-registry:5000/test-nuxt:latest"
+      repo: k3d-registry:5000/test-nuxt
+      insecure: true
+      tags: latest
 
 volumes:
   - name: cache
