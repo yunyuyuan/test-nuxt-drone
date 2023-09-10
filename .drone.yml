@@ -1,0 +1,36 @@
+kind: pipeline
+type: docker
+name: build
+
+trigger:
+  event:
+    - push
+  branch:
+    - master
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: build_project
+    image: node:18-alpine
+    volumes:
+      - name: cache
+        path: /drone/src/node_modules
+    commands:
+      - npm i -g pnpm
+      - pnpm i
+      - pnpm build
+  - name: build_docker
+    image: plugins/docker
+    settings:
+      registry: k3d-registry:5112
+      repo: test-nuxt
+      tags:
+        - latest
+
+volumes:
+  - name: cache
+    host:
+      path: /var/cache/drone-test-nuxt
